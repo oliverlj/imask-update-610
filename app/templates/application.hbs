@@ -1,7 +1,40 @@
-{{page-title "ImaskUpdate610"}}
+<h1>Imask bug 6.0.5 -> 6.1.0</h1>>
 
-{{!-- The following component displays Ember's default welcome message. --}}
-<WelcomePage />
-{{!-- Feel free to remove this! --}}
+<BsForm @formLayout='vertical' as |form|>
+  <div class='row'>
+    <div class='col-8 col-sm-9 col-md-8 col-xl-9'>
+      <form.group>
+        <label for='contribution'>Contribution</label>
+        <Input
+          id='contribution'
+          @value={{this.contribution}}
+          @type='range'
+          min='0'
+          max='10000'
+          step='1000'
+          class='custom-range'
+          {{on 'change' this.onChange}}
+        />
+      </form.group>
+    </div>
+    <div class='col-4 col-sm-3 col-md-4 col-xl-3'>
+      <form.element
+        @value={{this.contribution}}
+        @onChange={{this.doNothing}}
+        as |el|
+      >
+        <el.control
+          {{imask-currency
+            this.contribution
+            '€'
+            onChange=this.setContribution
+            min=0
+            max='10000'
+          }}
+        />
+      </form.element>
+    </div>
+  </div>
+</BsForm>
 
-{{outlet}}
+<p> contribution choose : {{this.finalContribution}}</p>
