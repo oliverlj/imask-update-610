@@ -1,4 +1,4 @@
-<h1>Imask bug 6.0.5 -> 6.1.0</h1>>
+<h1>Imask</h1>
 
 <BsForm @formLayout='vertical' as |form|>
   <div class='row'>
@@ -11,18 +11,14 @@
           @type='range'
           min='0'
           max='10000'
-          step='1000'
+          step='10'
           class='custom-range'
           {{on 'change' this.onChange}}
         />
       </form.group>
     </div>
     <div class='col-4 col-sm-3 col-md-4 col-xl-3'>
-      <form.element
-        @value={{this.contribution}}
-        @onChange={{this.doNothing}}
-        as |el|
-      >
+      <form.element @onChange={{this.doNothing}} as |el|>
         <el.control
           {{imask-currency
             this.contribution
@@ -36,5 +32,3 @@
     </div>
   </div>
 </BsForm>
-
-<p> contribution choose : {{this.finalContribution}}</p>

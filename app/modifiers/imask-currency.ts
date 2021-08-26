@@ -1,6 +1,7 @@
 import Money from 'bigint-money';
 import Modifier from 'ember-modifier';
 import IMask from 'imask';
+import { registerDestructor } from '@ember/destroyable';
 
 import type { MaskedPattern } from 'imask';
 
@@ -20,7 +21,10 @@ export default class ImaskCurrency extends Modifier<ImaskCurrencyArgs> {
   constructor(owner: unknown, args: ImaskCurrencyArgs) {
     super(owner, args);
 
-    if (this.args.named.onChange && typeof this.args.named.onChange !== 'function') {
+    if (
+      this.args.named.onChange &&
+      typeof this.args.named.onChange !== 'function'
+    ) {
       throw new Error('onChange must be a function');
     }
   }
@@ -58,11 +62,8 @@ export default class ImaskCurrency extends Modifier<ImaskCurrencyArgs> {
   };
 
   didUpdateArguments(): void {
-    if (this.mask) {
-      if (this.positionalValue) {
-        this.mask.unmaskedValue = this.positionalValue;
-        this.mask.updateValue();
-      }
+    if (this.mask && this.positionalValue) {
+      this.mask.unmaskedValue = this.positionalValue;
     }
   }
 
@@ -81,9 +82,15 @@ export default class ImaskCurrency extends Modifier<ImaskCurrencyArgs> {
       },
     }) as unknown as IMask.InputMask<MaskedPattern>;
 
+    registerDestructor(this, () => {
+      this.mask?.destroy();
+    });
+
     if (this.args.positional[0]) {
       if (this.args.positional[0] instanceof Money) {
-        this.mask.unmaskedValue = this.args.positional[0].toFixed(this.fractionDigits);
+        this.mask.unmaskedValue = this.args.positional[0].toFixed(
+          this.fractionDigits
+        );
       } else {
         this.mask.unmaskedValue = this.args.positional[0].toString();
       }
@@ -91,13 +98,6 @@ export default class ImaskCurrency extends Modifier<ImaskCurrencyArgs> {
 
     if (this.args.named.onChange) {
       this.mask.on('complete', this.onChangeHandler);
-    }
-  }
-
-  willRemove(): void {
-    if (this.mask) {
-      this.mask.off('complete', this.onChangeHandler);
-      this.mask.destroy();
     }
   }
 }

@@ -6,8 +6,6 @@ import { tracked } from '@glimmer/tracking';
 export default class App extends Controller {
   @tracked contribution = 1000;
 
-  @tracked finalContribution = 1000;
-
   @action
   doNothing(): void {
     // Dummy action
@@ -15,7 +13,7 @@ export default class App extends Controller {
 
   @action
   onChange() {
-    this.finalContribution = this.contribution;
+    console.log(`contribution choose : ${this.contribution}`);
   }
 
   @action
